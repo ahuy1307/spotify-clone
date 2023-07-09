@@ -90,12 +90,12 @@ function PlayerContent({ song, songUrl }: Props) {
 					<LikeButton songId={song.id} />
 				</div>
 			</div>
-			<div className="flex md:hidden col-auto w-full justify-end items-center">
+			{/* <div className="flex md:hidden col-auto w-full justify-end items-center">
 				<div onClick={onPlayMusic} className="h-10 w-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer">
 					<Icon size={30} className="text-black" />
 				</div>
-			</div>
-			<div className="hidden h-full md:flex justify-center items-center w-full max-w-[722px] gap-x-6">
+			</div> */}
+			<div className="h-full flex justify-end md:justify-center items-center w-full max-w-[722px] gap-x-6">
 				<AiFillStepBackward onClick={onPlayPrevious} size={30} className="text-neutral-400 cursor-pointer hover:text-white transition" />
 				<div className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer" onClick={() => {}}>
 					<Icon size={30} className="text-black" onClick={onPlayMusic} />

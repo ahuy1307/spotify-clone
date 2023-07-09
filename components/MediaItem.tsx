@@ -1,6 +1,7 @@
 "use client";
 
 import useLoadImage from "@/hooks/useLoadImage";
+import usePlayer from "@/hooks/usePlayer";
 import { Song } from "@/types";
 import Image from "next/image";
 
@@ -11,11 +12,11 @@ interface Props {
 
 function MediaItem({ data, onClick }: Props) {
 	const imagePath = useLoadImage(data);
-
+	const player = usePlayer();
 	const handleClick = () => {
 		if (onClick) return onClick(data.id);
 
-		//Default turn on player
+		return player.setId(data.id);
 	};
 	return (
 		<div

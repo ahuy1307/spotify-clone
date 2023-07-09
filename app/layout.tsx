@@ -7,6 +7,7 @@ import ModalProvider from "@/providers/ModalProvider";
 import ToasterProvider from "@/providers/ToasterProvider";
 import getSongByUserId from "@/actions/getSongByUserId";
 import Player from "@/components/Player";
+import getActiveProductsWithPrices from "@/actions/getActiveProductsWithPrices";
 const inter = Figtree({ subsets: ["latin"] });
 
 export const metadata = {
@@ -16,13 +17,14 @@ export const metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const songs = await getSongByUserId();
+	const products = await getActiveProductsWithPrices();
 	return (
 		<html lang="en">
 			<body className={inter.className}>
 				<SupabaseProvider>
 					<ToasterProvider />
 					<UserContextProvider>
-						<ModalProvider />
+						<ModalProvider products={products} />
 						<SideBar songs={songs}>{children}</SideBar>
 						<Player />
 					</UserContextProvider>

@@ -32,26 +32,24 @@ export const UserContextProvider = ({ props, children }: Props) => {
 	const [subscription, setSubscription] = useState<Subscription | null>(null);
 
 	const getUserDetails = () => supabase.from("users").select("*").single();
-	const getSubscriptions = () => supabase.from("subscriptions").select("*, prices(*, product(*))").in("status", ["trialing", "active"]).single();
+	const getSubscription = () => supabase.from("subscriptions").select("*, prices(*, products(*))").in("status", ["trialing", "active"]).single();
 
 	useEffect(() => {
 		if (user && !isLoadingData && !userDetails && !subscription) {
 			setIsLoadingData(true);
-			Promise.allSettled([getUserDetails(), getSubscriptions()]).then((results) => {
-				const promiseUser = results[0];
-				const promiseSubscription = results[1];
+			Promise.allSettled([getUserDetails(), getSubscription()]).then((results) => {
+				const userDetailsPromise = results[0];
+				const subscriptionPromise = results[1];
 
-				if (promiseUser.status === "fulfilled") {
-					setUserDetails(promiseUser.value.data as UserDetails);
-				}
-				if (promiseSubscription.status === "fulfilled") {
-					setSubscription(promiseSubscription.value.data as Subscription);
-				}
+				if (userDetailsPromise.status === "fulfilled") setUserDetails(userDetailsPromise.value.data as UserDetails);
+
+				if (subscriptionPromise.status === "fulfilled") setSubscription(subscriptionPromise.value.data as Subscription);
+
+				setIsLoadingData(false);
 			});
-			setIsLoadingData(false);
-		} else if (!user && !isLoadingData && !isLoadingUser) {
-			setSubscription(null);
+		} else if (!user && !isLoadingUser && !isLoadingData) {
 			setUserDetails(null);
+			setSubscription(null);
 		}
 	}, [user, isLoadingUser]);
 
