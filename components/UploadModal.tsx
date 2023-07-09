@@ -7,7 +7,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import Button from "./Button";
 import toast from "react-hot-toast";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSessionContext, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/providers/UserContextProvider";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +15,7 @@ function UploadModal() {
 	const uploadModal = useUploadModal();
 	const [isLoading, setIsLoading] = useState(false);
 	const supabase = useSupabaseClient();
-	const user = useUser();
+	const { session } = useSessionContext();
 	const router = useRouter();
 	const { reset, register, handleSubmit } = useForm<FieldValues>({
 		defaultValues: {
@@ -33,7 +33,7 @@ function UploadModal() {
 			const songFile = values.song?.[0];
 			const imageFile = values.image?.[0];
 			const uniqedId = uniqid();
-			if (!songFile || !imageFile || !user) {
+			if (!songFile || !imageFile || !session?.user) {
 				toast.error("Missing field!");
 				return;
 			}
@@ -61,12 +61,13 @@ function UploadModal() {
 
 			//Insert to songs table
 			const { error: supabaseError } = await supabase.from("songs").insert({
-				user_id: user.user?.id,
+				user_id: session?.user?.id,
 				title: values.title,
 				author: values.author,
 				song_path: songData?.path,
 				image_path: imageData?.path,
 			});
+
 			if (supabaseError) {
 				setIsLoading(false);
 				return toast.error("Failed upload song");
